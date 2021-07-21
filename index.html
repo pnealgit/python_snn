@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="utf-8">
+<style>
+canvas {
+    border:2px solid #000000;
+    background-color: #ffffff;
+    padding: 0;
+    margin: auto;
+    display: block;
+}
+</style>
+</head>
+
+<script>  
+
+console.log("prn loading redo  Aug 29 2019");
+function startGame() {
+    console.log("STARTGAME")
+    my_game_area.start();
+}
+ 
+</script>
+</head>
+<body onload="startGame()">
+<p>
+
+<center>
+<button id = "btn" onclick="stop()">stop</button>
+<p>
+<table id="fitness_table"></table>
+</center>
+
+
+</body>
+<script src='game.js'></script>
+<script src='updategamearea.js'></script>
+<script src='draw_rover.js'></script>
+<script src='rectangle.js'></script>
+<script src='ws.js'></script>
+<script src='setup.js'></script>
+
+<script>
+    function stop() {
+       console.log("STOPPPPPP");
+       clearInterval(myGameArea.interval);
+    }
+</script>
+</html>
+
