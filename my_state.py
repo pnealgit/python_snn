@@ -1,8 +1,6 @@
 import random
 def make_rover(name,color) :
     my_rover = {}
-    #name = "red_shit"
-    #color = "red"
     sensor_length = 60
 
     my_rover['Xpos'] = random.randrange(10,100)

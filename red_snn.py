@@ -10,7 +10,7 @@ import my_brains
 import my_sensors
 
 setup = {}
-name = "red_shit"
+name = "red_stuff"
 color = "red"
 #
 NUM_BRAINS = 10;

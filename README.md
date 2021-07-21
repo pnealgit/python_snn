@@ -55,4 +55,13 @@ type: python red_snn.py
 Things should start happening.
 
 
+You should be able to run multiple instances of (red__snn.py.
 
+Just copy red_snn.py to say 'green_snn.py'
+
+edit green_snn.py , change the name and the color.
+
+save it
+
+then type:
+	python green_snn.py
