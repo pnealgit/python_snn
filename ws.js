@@ -21,14 +21,18 @@ connection.onmessage = (event) => {
 
 	if (msg_type == "new" ) {
 		console.log("NEW: ",state);
+		//setup state for a user
 		ROVERS[name] = {};
 		ROVERS[name]['Color'] = state.shift();
-		var SETUP = {};
 
+		//setup stuff to be sent back to user
+		var SETUP = {};
 		SETUP['name'] = name;
 		SETUP['width'] = WIDTH;
 		SETUP['height'] = HEIGHT;
 		SETUP['rectangles'] = rectangles;
+		SETUP['poison'] = POISON;
+		SETUP['food'] = FOOD;
 
 		var jsetup = "";
 		jsetup = JSON.stringify(SETUP);
@@ -37,7 +41,6 @@ connection.onmessage = (event) => {
 
 
 	if (msg_type == "position" ) {
-		//var istate = state.split(',').map(Number);
 		var istate = state.map((i) => Number(i));
 		ROVERS[name]['Xpos'] = istate.shift();
 		ROVERS[name]['Ypos'] = istate.shift();
@@ -48,6 +51,7 @@ connection.onmessage = (event) => {
 			var sdxy = [];
 		    	sdxy.push(istate.shift());
 		    	sdxy.push(istate.shift());
+		    	junk = istate.shift(); //get type
 			sensor_data.push(sdxy);
 		}
 		ROVERS[name]['SENSOR_DATA'] = sensor_data;

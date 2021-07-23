@@ -5,5 +5,8 @@ function make_setup() {
 	SETUP['height'] = 240; 
 	SETUP['rectangles'] = rectangles;
 	SETUP['radius'] = 10;
+	SETUP['poison'] = 1;
+	SETUP['food'] = 2;
+
 }
 

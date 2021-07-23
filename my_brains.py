@@ -3,13 +3,12 @@ import copy
 
 brains = []
 NUM_BRAINS = 10
-def reset_brain(brain) :
-     print("DEAD FROM WALL  FITNESS : ",brain['Fitness'])
+NUM_NEURONS = 12
+def reset_brain(brain,my_rover) :
+     print("BRAIN DEAD FITNESS : ",brain['Fitness']," TTL: ",my_rover['TTL'])
      if len(brains) < NUM_BRAINS :
-         print("APPENDING BRAIN")
          brains.append(brain)
          brain = make_brain()
-         print("MADE NEW BRAIN");
          return brain
      else:
          #sort brains by fitness
@@ -33,8 +32,7 @@ def reset_brain(brain) :
 def make_brain() :
     brain = {}
     brain['Fitness'] = 0.0
-    brain['Num_neurons'] = 8 
-    NUM_NEURONS = brain['Num_neurons']
+    brain['Num_neurons'] = NUM_NEURONS 
 
     xsign = [0]*NUM_NEURONS
     for ix in range(0,NUM_NEURONS):

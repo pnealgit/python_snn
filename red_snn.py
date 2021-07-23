@@ -19,12 +19,17 @@ my_rover = {}
 
 my_position_msg = "";
 
+def reset_food(setup):
+    
+    for k in range(0,len(setup['rectangles'])):
+            if setup['rectangles'][k]['type'] == 2 :
+                setup['rectangles'][k]['eaten'] = 0
 
-def think(brain,my_rover) :
+def think(brain,my_rover,setup) :
         #In most cases , the sensor_data_vector will be all zeros.
         #so add some bias to make something happen.
         #
-        my_rover = my_sensors.make_binary_sensor_data(my_rover)
+        my_rover = my_sensors.make_binary_sensor_data(my_rover,setup)
         #print("THINK BINARY SENSOR_DATA IS: ",my_rover['Binary_sensor_data'])
         NUM_NEURONS = brain['Num_neurons']
         THRES = 3
@@ -83,9 +88,13 @@ def think(brain,my_rover) :
             #end of pass through all neurons
 
             #fire_knt is used to choose what sensor to go with
-            fire_knt[0] += temp_outps[0] + temp_outps[1];
-            fire_knt[1] += temp_outps[3] + temp_outps[4];
-            fire_knt[2] += temp_outps[6] + temp_outps[7];
+            for k in range(0,4):
+                fire_knt[0] += temp_outps[k];
+            for k in range(4,8):
+                fire_knt[1] += temp_outps[k];
+            for k in range(8,12):
+                fire_knt[2] += temp_outps[k];
+
 
             #save outps for refactory
             outps = copy.deepcopy(temp_outps)
@@ -129,51 +138,61 @@ def think(brain,my_rover) :
 
 
 def make_new_msg(my_rover) :
-        global SETUP
         print("SENDING NEW MESSAGE")
         new_msg = "new," + my_rover['Name'] + ","+my_rover['Color'];
         return new_msg
 
 async def hello():
     uri = "ws://localhost:8088"
-    my_rover = my_state.make_rover(name,color)
-    global setup 
     async with websockets.connect(uri) as websocket:
-
+        my_rover = my_state.make_rover(name,color)
         setup_request =  make_new_msg(my_rover)
         print(setup_request)
         await websocket.send(setup_request)
         jsetup = await websocket.recv()
         setup = json.loads(jsetup)
-        print("RECEIVED: ",setup)
+        my_rover = my_state.add_setup_to_my_rover(my_rover,setup)
+
         bidx = 0
         while bidx < 100:
             print("TRY COUNT: ",bidx)
             my_rover = my_state.make_rover(name,color)
-            if bidx < NUM_BRAINS :
-                brain = my_brains.make_brain()  # get initial brain
+            brain = my_brains.make_brain()  # get initial brain
             while True:
-                if my_rover['TTL'] <= 0:
-                    my_rover['Dead'] = 1000
-
                 wall = 0;
-                wall = my_sensors.check_borders(my_rover['Xpos'],my_rover['Ypos'],setup)
-                if wall > 0:
-                    my_rover['Dead'] = wall
-                if my_rover['Dead'] > 0:
-                    brain = my_brains.reset_brain(brain)
-                    my_rover = my_state.make_rover(name,color)
-                my_rover = my_sensors.get_sensor_data(my_rover,setup)
-                my_rover = think(brain,my_rover)
-                data_to_send = []
-                data_to_send.append(my_rover['Xpos'])
-                data_to_send.append(my_rover['Ypos'])
-                data_to_send.append(my_rover['Num_sensors'])
-                data_to_send += my_rover['Sensor_data']
-                sdata = [str(int) for int in data_to_send]
-                ssd = ",".join(sdata);
-                position_msg = "position,"+my_rover['Name'] + "," + ssd;
-                await websocket.send(position_msg)
+                wall = my_sensors.check_position_borders(my_rover['Xpos'],my_rover['Ypos'],setup)
+                #food
+                if wall == setup['food'] :
+                    my_rover['TTL'] += 10
+                    print("GOOD FOOD TTL : ",my_rover['TTL'])
 
+                if wall == setup['poison'] :
+                    my_rover['Dead'] = 1
+                    print("BAD WALL: ")
+
+                if my_rover['TTL'] <= 0:
+                    my_rover['Dead'] = 1
+                    print("BAD TTL : ",my_rover['TTL'])
+
+                if my_rover['Dead'] == 1:
+                    brain = my_brains.reset_brain(brain,my_rover)
+                    my_rover = my_state.make_rover(name,color)
+                    reset_food(setup)
+                else:
+                    my_rover = my_sensors.get_sensor_data(my_rover,setup)
+                    my_rover = think(brain,my_rover,setup)
+                    
+                    data_to_send = []
+                    data_to_send.append(my_rover['Xpos'])
+                    data_to_send.append(my_rover['Ypos'])
+                    data_to_send.append(my_rover['Num_sensors'])
+                    data_to_send += my_rover['Sensor_data']
+                    sdata = [str(int) for int in data_to_send]
+                    ssd = ",".join(sdata);
+                    position_msg = "position,"+my_rover['Name'] + "," + ssd; await websocket.send(position_msg)
+
+        bidx += 1
+        print("AT BOTTOM TRY = ",bidx)
+         
 asyncio.get_event_loop().run_until_complete(hello())
 

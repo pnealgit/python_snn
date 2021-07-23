@@ -6,6 +6,14 @@ var NUM_SENSORS = 3
 var Time_to_live = 1000;
 var TRY = 0;
 
+function getRandomInt(min,max) {
+    return Math.floor(Math.random() * (max - min )) + min; //not inclusive never max
+}
+function getRandomFloat(min,max) {
+    return 0.0 + (Math.random() * (max - min )) + min;
+}
+
+
 
 function make_table() {
     results = "<tr><td>FITNESS</td></tr>";

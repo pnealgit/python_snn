@@ -25,3 +25,9 @@ def make_rover(name,color) :
     #print("IN MAKE_ROVER: ",my_rover)
     return my_rover
 
+def add_setup_to_my_rover(my_rover,setup):
+   
+    my_rover['Poison'] = setup['poison']
+    my_rover['Food'] = setup['food']
+    return my_rover
+

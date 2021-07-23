@@ -24,6 +24,8 @@ It is a specific case of an extreme learning machine
 
 TO RUN:
 
+This is a mixture of node , javacript, html, and python.
+
 Open up a terminal session.
 
 Get to the command line
